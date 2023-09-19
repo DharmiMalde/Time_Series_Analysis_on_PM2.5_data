@@ -1,0 +1,65 @@
+---
+title: "Time_Series_Analysis"
+author: "Dharmi Malde"
+date: "2023-09-19"
+output:
+  html_document:
+    df_print: paged
+---
+# Getting Data
+```{r}
+data = read.csv(file.choose("Time_Series_Data"))
+ts_data = ts( data$Mean,start=2019,frequency = 365)
+```
+
+# Installing imp library
+```{r}
+library(ggplot2)
+library(lubridate)
+library(fpp3)
+library(tsibble)
+library(stats)
+```
+
+# Converting to time variable
+```{r}
+data$Dates <- as.Date(data$Dates)
+```
+
+# Ploting time series data
+```{r}
+ggplot(data)+
+  geom_line(aes(x=data$Dates,y=data$Mean))+
+  xlab("Year") +
+  ylab("PM Conc.")
+```
+
+# 
+```{r}
+gg_season(as_tsibble(data))
+```
+# Decomposition of Time Series
+
+```{r}
+stl_result = stl(ts_data, s.window = "periodic")
+```
+
+
+```{r}
+seasonal_component = stl_result$time.series[, "seasonal"]
+trend_component = stl_result$time.series[, "trend"]
+remainder_component = stl_result$time.series[, "remainder"]
+```
+
+```{r}
+plot(seasonal_component)
+plot(trend_component)
+plot(remainder_component)
+```
+# ACF and PACF graphs
+```{r}
+acf(ts_data)
+pacf(ts_data)
+```
+
+
